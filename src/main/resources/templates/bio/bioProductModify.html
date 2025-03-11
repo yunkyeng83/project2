@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{bio/basic.html}">
+<head>
+    <title>제품 수정</title>
+</head>
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h2>제품수정</h2>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/bio/bioProductModify}" method="post" id="f1">
+
+                        <input type="hidden" name="bioNo" th:value="${dto.bioNo}">
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">제품코드</span>
+                            <!--name속성은 DTO의 해당 필드로 바인딩 된다-->
+                            <!--<dto는 ProductDTO()클래스의 객체이다. 이 객체를 이용해서 DTO의 productName 필드에 접근한다. -->
+                            <input type="text" class="form-control" th:value="${dto.productCode}" name="productCode" readonly>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">제품명</span>
+                            <input type="text" class="form-control" th:value="${dto.productName}" name="productName">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">카테고리</span>
+                            <select class="form-select" name="currentCategory">
+                                <option value="cat1" th:selected="${dto.currentCategory == 'cat1'}">cat1</option>
+                                <option value="cat1" th:selected="${dto.currentCategory == 'cat2'}">cat2</option>
+                                <option value="cat1" th:selected="${dto.currentCategory == 'cat3'}">cat3</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">포장단위</span>
+                            <select class="form-select" name="packagingUnit">
+                                <option value="주사제" th:selected="${dto.packagingUnit == '주사제'}">주사제</option>
+                                <option value="유리병" th:selected="${dto.packagingUnit == '유리병'}">유리병</option>
+                                <option value="건조분말" th:selected="${dto.packagingUnit == '건조분말'}">건조분말</option>
+                            </select>
+                        </div>
+
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">효능군</span>
+
+                            <select class="form-select" name="efficacyGroup">
+                                <option value="관절염" th:selected="${dto.efficacyGroup == '관절염'}">관절염</option>
+                                <option value="유방암" th:selected="${dto.efficacyGroup == '유방암'}">유방암</option>
+                                <option value="장질환" th:selected="${dto.efficacyGroup == '장질환'}">장질환</option>
+                            </select>
+                        </div>
+
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">생산유형</span>
+                            <select class="form-select" name="productionType">
+                                <option value="자체개발" th:selected="${dto.efficacyGroup == '자체개발'}">자체개발</option>
+                                <option value="공동개발" th:selected="${dto.efficacyGroup == '공동개발'}">공동개발</option>
+                                <option value="위탁생산" th:selected="${dto.efficacyGroup == '위탁생산'}">위탁생산</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">등록자</span>
+                            <input type="text" class="form-control" th:value="${dto.registeredBy}" name="registeredBy" readonly>
+                        </div>
+
+
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">등록일자</span>
+                            <input type="text" class="form-control" th:value="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">설명</span>
+                            <textarea class="form-control col-sm-5" rows="3" th:text="${dto.description}" name="description"></textarea>
+                        </div>
+
+
+<!--                        <div class="input-group mb-3">-->
+<!--                            <span class="input-group-text">수정일자</span>-->
+<!--                            <input type="text" class="form-control" th:value="${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm:ss')}" readonly>-->
+<!--                        </div>-->
+
+                        <div class="my-4">
+                            <div class="float-end"> <!--오른쪽 끝에 정렬함-->
+                                <button type="button" class="btn btn-primary listBtn">목 록</button>
+                                <button type="button" class="btn btn-secondary modBtn">수 정</button>
+                                <button type="button" class="btn btn-danger removeBtn">제 거</button>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div><!--end card body-->
+            </div> <!--end card-->
+        </div><!--end col-->
+    </div><!--end row-->
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+    const link = [[${bioProductPageRequestDTO.getLink()}]];
+    const formObj = document.querySelector('#f1');
+
+    //modify 버튼 클릭(바닐라)
+    document.querySelector(".modBtn").addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        formObj.action = `/bio/bioProductModify?${link}`;
+        formObj.method='post';
+        formObj.submit();
+    }, false);
+
+
+
+    //list 버튼 클릭(jquery)
+    $(".listBtn").on("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = `/bio/bioProductList`;
+    });
+
+
+    //remove 버튼 클릭(jquery)
+    $(".removeBtn").on("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        if(confirm("삭제하시겠습니까?")){
+            formObj.action = `/bio/bioProductRemove`;
+            formObj.method='post';
+            formObj.submit();
+        } else {
+            return false;
+        }
+    });
+
+
+/*
+    document.querySelector(".removeBtn").addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        formObj.action = `/bio/bioProductRemove`;
+        formObj.method ='post';
+        formObj.submit();
+    }, false);
+*/
+
+
+
+
+
+    //유효성 에러가 났을 경우 화면 처리
+    /*
+    * 절차
+    * 1. 사용자가 폼을 제출하면 백엔드에서 유효성 검사를 진행한다.(@Valid..)
+    * 2. 오류가 발생하면 errors 리스트를 model에 담아서 다시 화면으로 보낸다.
+    * 3. javaScript에서 [[${errors}]] 을 통해 오류 데이터를 가져온다.
+    * 4. for문으로 field -> code 형식의 메시지를 만든다.
+    * 5. alert() 로 보여준다.
+    * 6. history.replaceState({}, null, null); 로 히스토리를 초기화하여 새로고침 시 같은 에러 메시지가
+    *    나타나지 않게 한다.
+    */
+    const errors = [[${errors}]];
+    console.log(errors);
+    let errorMsg = '';
+
+    if(errors){
+        for(let i=0; i<errors.length; i++){
+             // errors[i].field = 오류가 발생한 필드 이름(예 : productCode)
+             // errors[i].code = 오류코드(예 : NotBlank)
+             // errorMsg += `${errors[i].field} -> ${errors[i].code} \n`;
+             errorMsg += `${errors[i].defaultMessage}\n`; // 친절한 메시지 출력
+        }
+        alert(errorMsg);
+    }
+
+</script>

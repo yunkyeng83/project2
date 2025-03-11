@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{bio/basic.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Register</title>
+</head>
+<div layout:fragment="content">
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h2>사원관리</h2>
+                </div>
+                <div class="card-body">
+                    <form action="/bio/Employeesregister" method="post">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">사원번호</span>
+                            <input type="text" name="employeeid" class="form-control" placeholder="사원 번호를 입력해주세요.">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">이름</span>
+                            <input type="text" name="employeename" class="form-control" placeholder="이름을 입력해주세요.">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">비밀번호</span>
+                            <input type="text" name="password" class="form-control" placeholder="비밀번호를 입력해주세요.">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">입사일자</span>
+                            <input type="date" name="hiredate" class="form-control">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">부서</span>
+                            <select name="department" class="form-select" id="departmentSelect">
+                                <option value="">부서를 선택해주세요</option>
+                                <option value="인사팀">인사팀</option>
+                                <option value="물류팀">물류팀</option>
+                                <option value="생산팀">생산팀</option>
+                                <option value="연구팀">연구팀</option>
+                                <option value="영업팀">영업팀</option>
+                                <option value="법무팀">법무팀</option>
+                                <option value="구매팀">구매팀</option>
+                                <option value="재무팀">재무팀</option>
+                                <option value="admin">admin</option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">Role</span>
+                            <select name="role" class="form-select" id="roleSelect">
+                                <option value="0">ADMIN</option>
+                                <option value="1">HR</option>
+                                <option value="2">LOGISTICS</option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">직책</span>
+                            <select name="position" class="form-select">
+                                <option value="">직책을 선택해주세요</option>
+                                <option value="사원">사원</option>
+                                <option value="대리">대리</option>
+                                <option value="과장">과장</option>
+                                <option value="차장">차장</option>
+                                <option value="부장">부장</option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">번호</span>
+                            <input type="text" name="contactnumber" class="form-control" placeholder="번호를 입력해주세요.">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width:100px; justify-content: center;">작성자</span>
+                            <input type="text" name="registeredby" class="form-control" th:value="${employee.employeename}" readonly>
+                        </div>
+                        <div class="my-4">
+                            <div class="float-end">
+                                <button type="submit" class="btn btn-primary">등 록</button>
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href=document.referrer">취 소</button>
+                            </div>
+                        </div>
+                    </form>
+                </div><!--end card body-->
+            </div><!--end card-->
+        </div><!--end col-->
+    </div><!--end row-->
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    const errors = [[${errors}]];
+    console.log(errors);
+    let errorMsg = '';
+
+    if(errors){
+        for(let i=0; i<errors.length; i++){
+             // errors[i].field = 오류가 발생한 필드 이름(예 : productCode)
+             // errors[i].code = 오류코드(예 : NotBlank)
+             // errorMsg += `${errors[i].field} -> ${errors[i].code} \n`;
+             errorMsg += `${errors[i].defaultMessage}\n`; // 친절한 메시지 출력
+        }
+        alert(errorMsg);
+    }
+
+    //부서 선택시 role 선택
+    document.getElementById("departmentSelect").addEventListener("change", function () {
+        let department = this.value;
+        let roleSelect = document.getElementById("roleSelect");
+
+        if (department === "인사팀") {
+            roleSelect.value = "1"; // HR
+        } else if (department === "물류팀") {
+            roleSelect.value = "2"; // LOGISTICS
+        } else {
+            roleSelect.value = ""; // 기본값 (선택 안 된 상태)
+        }
+    });
+
+
+</script>
